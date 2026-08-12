@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LC901 - Portal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: url('assets/icons/index.jpg') center/cover no-repeat fixed;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 6, 12, 0.55);
+      backdrop-filter: blur(1px);
+      -webkit-backdrop-filter: blur(1px);
+      z-index: -1;
+    }
+
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-orbs::before, .bg-orbs::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+    }
+
+    .bg-orbs::before {
+      width: 600px; height: 600px;
+      top: -10%; left: -5%;
+      background: radial-gradient(circle, rgba(0, 100, 220, 0.22), rgba(0, 60, 180, 0.1), transparent 70%);
+      animation: orbFloat1 15s ease-in-out infinite alternate;
+    }
+
+    .bg-orbs::after {
+      width: 500px; height: 500px;
+      bottom: -10%; right: -5%;
+      background: radial-gradient(circle, rgba(0, 120, 240, 0.18), rgba(0, 80, 200, 0.08), transparent 70%);
+      animation: orbFloat2 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes orbFloat1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(8%, 12%) scale(1.15); }
+    }
+
+    @keyframes orbFloat2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-10%, -8%) scale(1.1); }
+    }
+
+    /* ===== 超透亮液体玻璃 ===== */
+    .glass {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    /* ===== DuangDuang 点击回弹 - 松开就duang ===== */
+    @keyframes duangBounce {
+      0%   { transform: scale(0.95, 1.05) translateY(1px); }
+      25%  { transform: scale(1.04, 0.96) translateY(-3px); }
+      50%  { transform: scale(0.98, 1.02) translateY(1px); }
+      75%  { transform: scale(1.01, 0.99) translateY(-1px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+
+    .duang-click {
+      transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      will-change: transform;
+    }
+
+    .duang-click:hover {
+      transform: translateY(-3px);
+    }
+
+    .duang-click.duang-pressed {
+      transform: scale(0.95, 1.05) translateY(1px);
+    }
+
+    .duang-click.duang-anim {
+      animation: duangBounce 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    /* 水珠涟漪 */
+    .water-drop {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .water-drop::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 100, 220, 0.15), transparent 70%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .water-drop:active::after {
+      animation: waterRipple 0.6s ease-out;
+    }
+
+    @keyframes waterRipple {
+      0% { width: 0; height: 0; opacity: 0.5; }
+      60% { opacity: 0.15; }
+      100% { width: 350px; height: 350px; opacity: 0; }
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem 2rem 6rem;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -2px;
+      text-shadow: 0 0 60px rgba(0, 100, 220, 0.25);
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, #0077dd, #0099ff, #0066cc);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoShimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes logoShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 3rem;
+      font-weight: 400;
+    }
+
+    /* 搜索框 */
+    .search-container {
+      position: relative;
+      max-width: 560px;
+      margin: 0 auto 3rem;
+      z-index: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 1.15rem 1.5rem 1.15rem 3.5rem;
+      font-size: 1.05rem;
+      border-radius: 28px;
+      color: #e0e0e0;
+      outline: none;
+      font-family: inherit;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.02) 40%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+      border-left: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset -1px -1px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .search-box:focus {
+      border-color: rgba(0, 100, 220, 0.5);
+      box-shadow:
+        0 0 0 4px rgba(0, 100, 220, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 60px rgba(0, 100, 220, 0.08);
+    }
+
+    .search-box::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+    .search-icon {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.3);
+      pointer-events: none;
+      transition: color 0.3s;
+    }
+
+    .search-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .search-box:focus ~ .search-icon { color: #0088dd; }
+
+    /* 链接卡片 */
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.3rem 1.5rem;
+      border-radius: 28px;
+      text-decoration: none;
+      color: #ccc;
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      transition: transform 0.3s ease;
+      backdrop-filter: blur(0.5px) contrast(1.1) brightness(1.05);
+      -webkit-backdrop-filter: blur(0.5px) contrast(1.1) brightness(1.05);
+    }
+
+    /* 顶部高光 - 对齐液态玻璃光源(左上角) */
+    .link-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      border-radius: 28px 28px 50% 50%;
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.18) 0%,
+        rgba(255,255,255,0.08) 30%,
+        transparent 60%
+      );
+      pointer-events: none;
+    }
+
+    /* 左上角光斑 - 对齐液态玻璃光源(左上角) */
+    .link-card::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -40%;
+      width: 70%;
+      height: 90%;
+      border-radius: 50%;
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255,255,255,0.15) 0%,
+        rgba(255,255,255,0.06) 40%,
+        transparent 70%
+      );
+      pointer-events: none;
+    }
+
+    /* 悬浮增强 */
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card:hover::before {
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.25) 0%,
+        rgba(255,255,255,0.12) 30%,
+        transparent 60%
+      );
+    }
+
+    .link-card:hover::after {
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255,255,255,0.22) 0%,
+        rgba(255,255,255,0.1) 40%,
+        transparent 70%
+      );
+    }
+
+    .link-card .card-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+
+    .link-card .card-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #0088dd;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .link-card .card-text { text-align: left; }
+
+    .link-card .card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: block;
+    }
+
+    .link-card .card-desc {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.3);
+      margin-top: 3px;
+      display: block;
+    }
+
+    /* 底部 */
+    .footer {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.2);
+      z-index: 1;
+    }
+
+    /* 搜索结果 */
+    .search-results {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0; right: 0;
+      border-radius: 16px;
+      display: none;
+      z-index: 99999;
+      background: rgba(15, 15, 25, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .search-results.active { display: block; }
+
+    .search-result-item {
+      padding: 0.85rem 1.2rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.92rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      min-height: 3rem;
+    }
+
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: rgba(0, 100, 220, 0.08); color: #fff; }
+
+    .search-result-item svg {
+      width: 16px; height: 16px;
+      fill: none; stroke: #0088dd; stroke-width: 1.8;
+      stroke-linecap: round; stroke-linejoin: round;
+      opacity: 0.6; flex-shrink: 0;
+    }
+
+    /* 为什么选我们按钮 */
+    .why-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 15rem;
+      z-index: 102;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      overflow: hidden;
+    }
+
+    .why-btn:hover {
+      border-color: rgba(0, 100, 220, 0.35);
+      color: #fff;
+    }
+
+    .why-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* 脉冲动画 */
+    @keyframes whyPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15); }
+      50% { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 100, 220, 0.15); }
+    }
+
+    .why-btn.pulse {
+      animation: whyPulse 2s ease-in-out infinite;
+    }
+
+    /* 语言下拉菜单 */
+    .lang-dropdown {
+      position: fixed;
+      top: 1.5rem; right: 9rem;
+      z-index: 100;
+      border-radius: 12px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .lang-btn {
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: inherit;
+      transition: all 0.25s;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lang-btn:hover {
+      border-color: rgba(0, 100, 220, 0.35);
+      color: #fff;
+    }
+
+    /* Kali菜单内语言切换按钮 */
+    .lang-btn-inline {
+      display: block;
+      width: calc(100% - 2rem);
+      margin: 0.5rem 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.95);
+      transition: all 0.25s;
+      text-align: left;
+    }
+
+    .lang-btn-inline:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(0, 100, 220, 0.4);
+      color: #fff;
+    }
+
+    /* Kali菜单内语言下拉菜单 */
+    .lang-menu-inline {
+      position: relative;
+      margin: 0 0.5rem 0.5rem;
+      border-radius: 10px;
+      display: none;
+      min-width: calc(100% - 1rem);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .lang-menu-inline.open { display: block; }
+
+    .lang-menu-inline button {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .lang-menu-inline button:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+    .lang-menu-inline button.active { background: rgba(0, 100, 220, 0.15); color: #0088dd; }
+
+    /* 右上角语言下拉菜单 */
+    .lang-menu-top {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      display: none;
+      min-width: 140px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .lang-menu-top.open { display: block; }
+
+    .lang-menu-top button {
+      display: block;
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .lang-menu-top button:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+    .lang-menu-top button.active { background: rgba(0, 100, 220, 0.15); color: #0088dd; }
+
+    .lang-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      display: none;
+      min-width: 140px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .lang-menu.open { display: block; }
+
+    .lang-menu button {
+      display: block;
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .lang-menu button:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+    .lang-menu button.active { background: rgba(0, 100, 220, 0.15); color: #0088dd; }
+
+    /* ===== Kali-style 侧边菜单栏 ===== */
+    .kali-sidebar {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 101;
+      border-radius: 12px;
+      overflow: visible;
+      background: transparent;
+    }
+
+    .kali-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      border: none;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+
+    .kali-toggle:hover {
+      background: rgba(0, 100, 220, 0.1);
+      color: #fff;
+    }
+
+    .kali-toggle svg {
+      transition: transform 0.3s ease;
+    }
+
+    .kali-toggle.active svg {
+      transform: rotate(90deg);
+    }
+
+    .kali-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 260px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+      opacity: 0;
+      border-radius: 14px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+      );
+      backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      -webkit-backdrop-filter: blur(40px) saturate(2.0) brightness(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        inset 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .kali-menu.open {
+      max-height: 600px;
+      opacity: 1;
+    }
+
+    .kali-category {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .kali-category:last-child {
+      border-bottom: none;
+    }
+
+    .kali-category-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(0, 136, 221, 0.8);
+      user-select: none;
+    }
+
+    .kali-category-title svg {
+      opacity: 0.7;
+    }
+
+    .kali-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1rem 0.65rem 1.25rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5) brightness(1.1);
+    }
+
+    .kali-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #0088dd;
+      transform: scaleY(0);
+      transition: transform 0.2s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .kali-item:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .kali-item:hover::before {
+      transform: scaleY(1);
+    }
+
+    .kali-item svg {
+      flex-shrink: 0;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .kali-item:hover svg {
+      opacity: 1;
+    }
+
+    .kali-item img {
+      flex-shrink: 0;
+      border-radius: 3px;
+    }
+
+    /* 主题切换 */
+    .theme-toggle-wrapper {
+      position: fixed;
+      bottom: 2.5rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 100;
+    }
+
+    .theme-label { font-size: 0.75rem; color: rgba(255, 255, 255, 0.25); user-select: none; }
+
+    .theme-switch { position: relative; width: 52px; height: 28px; }
+    .theme-switch input { opacity: 0; width: 0; height: 0; }
+
+    .theme-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      border-radius: 28px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .theme-slider::before {
+      content: '';
+      position: absolute;
+      height: 22px; width: 22px;
+      left: 3px; bottom: 3px;
+      border-radius: 50%;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: radial-gradient(circle at 35% 35%, #0088dd, #0055aa);
+      box-shadow: 0 0 10px rgba(0, 100, 220, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .theme-switch input:checked + .theme-slider::before {
+      transform: translateX(24px);
+      background: radial-gradient(circle at 35% 35%, #ffd966, #ffb732);
+      box-shadow: 0 0 10px rgba(255, 200, 50, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ===== 浅色主题 ===== */
+    body.light { background: #e8ecf4; color: #1a1a2e; }
+    body.light .bg-orbs::before { opacity: 0.35; background: radial-gradient(circle, rgba(0, 60, 180, 0.15), rgba(0, 40, 140, 0.06), transparent 70%); }
+    body.light .bg-orbs::after { opacity: 0.3; background: radial-gradient(circle, rgba(0, 80, 200, 0.12), rgba(0, 50, 160, 0.04), transparent 70%); }
+
+    body.light .tagline { color: rgba(0, 0, 0, 0.3); }
+
+    body.light .glass {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        rgba(255, 255, 255, 0.6) 100%
+      );
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05);
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.9);
+      border-left: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.06),
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.02),
+        inset 1px 0 0 rgba(255, 255, 255, 0.5);
+    }
+
+    body.light .search-box {
+      color: #1a1a2e;
+      background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.5) 100%);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-top: 1px solid rgba(255,255,255,0.9);
+      border-left: 1px solid rgba(255,255,255,0.8);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.02);
+    }
+    body.light .search-box::placeholder { color: rgba(0, 0, 0, 0.3); }
+    body.light .search-box:focus {
+      border-color: rgba(0, 80, 200, 0.4);
+      box-shadow: 0 0 0 4px rgba(0,80,200,0.06), 0 8px 32px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9), 0 0 60px rgba(0,80,200,0.05);
+    }
+    body.light .search-icon { color: rgba(0,0,0,0.3); }
+    body.light .search-box:focus ~ .search-icon { color: #0066cc; }
+
+    body.light .search-results { background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.7); }
+    body.light .search-result-item { color: rgba(0,0,0,0.4); border-bottom-color: rgba(0,0,0,0.04); }
+    body.light .search-result-item:hover { background: rgba(0,80,200,0.06); color: #1a1a2e; }
+    body.light .search-result-item svg { stroke: #0066cc; }
+
+    body.light .link-card { color: #333; }
+    body.light .link-card .card-icon {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    body.light .link-card .card-icon svg { stroke: #0066cc; }
+    body.light .link-card .card-desc { color: rgba(0,0,0,0.35); }
+
+    body.light .link-card::before {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.2) 40%,
+        transparent 60%
+      );
+    }
+    body.light .link-card::after {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.7) 0%,
+        rgba(255, 255, 255, 0.3) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 100%
+      );
+    }
+    body.light .link-card {
+      box-shadow:
+        inset 1px 1px 0 rgba(255, 255, 255, 0.8),
+        inset -1px -1px 0 rgba(0, 0, 0, 0.03),
+        0 8px 32px rgba(0, 0, 0, 0.06),
+        0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    body.light .link-card:hover {
+      box-shadow:
+        inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+        inset -1px -1px 0 rgba(0, 0, 0, 0.05),
+        inset 0 -20px 40px rgba(255, 255, 255, 0.15),
+        0 12px 40px rgba(0, 0, 0, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+    body.light .link-card:hover::before {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 40%,
+        transparent 60%
+      );
+    }
+    body.light .link-card:hover::after {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.85) 0%,
+        rgba(255, 255, 255, 0.4) 25%,
+        rgba(255, 255, 255, 0.12) 50%,
+        transparent 100%
+      );
+    }
+
+    body.light .footer { color: rgba(0,0,0,0.25); }
+
+    body.light .theme-slider { background: rgba(200,210,225,0.5); border-color: rgba(255,255,255,0.6); }
+    body.light .theme-label { color: rgba(0,0,0,0.3); }
+    body.light .logo span {
+      background: linear-gradient(135deg, #0055bb, #0077dd, #0044aa);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    body.light .lang-btn { color: #333; }
+    body.light .lang-btn:hover { border-color: rgba(0,80,200,0.3); }
+    body.light .lang-btn-inline { color: #333; border-color: rgba(0,0,0,0.1); }
+    body.light .lang-btn-inline:hover { border-color: rgba(0,80,200,0.3); }
+    body.light .lang-menu {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        rgba(255, 255, 255, 0.6) 100%
+      ) !important;
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.9) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.75) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.02), inset 1px 0 0 rgba(255,255,255,0.5) !important;
+    }
+    body.light .lang-menu button { color: rgba(0,0,0,0.4); }
+    body.light .lang-menu button:hover { background: rgba(0,80,200,0.06); color: #1a1a2e; }
+    body.light .lang-menu button.active { color: #0066cc; }
+    body.light .lang-menu-inline {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        rgba(255, 255, 255, 0.6) 100%
+      ) !important;
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    }
+    body.light .lang-menu-inline button { color: rgba(0,0,0,0.5); }
+    body.light .lang-menu-inline button:hover { background: rgba(0,80,200,0.06); color: #1a1a2e; }
+    body.light .lang-menu-inline button.active { color: #0066cc; }
+    body.light .lang-menu-top {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        rgba(255, 255, 255, 0.6) 100%
+      ) !important;
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    }
+    body.light .lang-menu-top button { color: rgba(0,0,0,0.5); }
+    body.light .lang-menu-top button:hover { background: rgba(0,80,200,0.06); color: #1a1a2e; }
+    body.light .lang-menu-top button.active { color: #0066cc; }
+
+    /* Light theme kali sidebar */
+    body.light .kali-sidebar { border-color: rgba(0,0,0,0.1) !important; }
+    body.light .kali-toggle { color: rgba(0, 0, 0, 0.7); }
+    body.light .kali-toggle:hover { background: rgba(0, 80, 200, 0.08); color: #1a1a2e; }
+    body.light .kali-menu {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        rgba(255, 255, 255, 0.6) 100%
+      ) !important;
+      border: 1px solid rgba(255,255,255,0.7) !important;
+      border-top: 1px solid rgba(255,255,255,0.9) !important;
+      border-left: 1px solid rgba(255,255,255,0.75) !important;
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.02), inset 1px 0 0 rgba(255,255,255,0.5) !important;
+    }
+    body.light .kali-category { border-bottom-color: rgba(0,0,0,0.06); }
+    body.light .kali-category-title { color: rgba(0, 80, 200, 0.7); }
+    body.light .kali-item { color: rgba(0,0,0,0.45); }
+    body.light .kali-item:hover { background: rgba(0,80,200,0.06); color: #1a1a2e; }
+    body.light .kali-item::before { background: #0066cc; }
+    body.light .kali-item svg { opacity: 0.5; }
+    body.light .kali-item:hover svg { opacity: 1; }
+
+    /* Light theme 为什么选我们按钮 */
+    body.light .why-btn {
+      background: rgba(255, 255, 255, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.9) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.75) !important;
+      color: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    }
+    body.light .why-btn:hover {
+      background: rgba(255, 255, 255, 0.75) !important;
+      border-color: rgba(0, 80, 200, 0.3) !important;
+      color: #1a1a2e !important;
+    }
+  </style>
+  <!-- GSAP Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Anime.js Animation Library -->
+  <script src="https://cdn.jsdelivr.net/npm/animejs@4.2.2/lib/index.min.js"></script>
+</head>
+<body>
+  <div class="bg-orbs"></div>
+
+  <!-- Kali-style 侧边菜单栏 -->
+  <div class="kali-sidebar" id="kaliSidebar">
+    <button class="kali-toggle" id="kaliToggle" type="button">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <span data-i18n="menu_label">菜单</span>
+    </button>
+    <div class="kali-menu" id="kaliMenu">
+      <div class="kali-category">
+        <div class="kali-category-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <span data-i18n="cat_services">服务</span>
+        </div>
+        <a href="services.html" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span data-i18n="item_pentest">网络安全服务</span>
+        </a>
+        <a href="#" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span data-i18n="item_audit">安全审计</span>
+        </a>
+        <a href="#" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+          <span data-i18n="item_scan">漏洞扫描</span>
+        </a>
+      </div>
+      <div class="kali-category">
+        <div class="kali-category-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span data-i18n="cat_learning">学习</span>
+        </div>
+        <a href="courses.html" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span data-i18n="item_courses">课程培训</span>
+        </a>
+        <a href="#" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span data-i18n="item_docs">文档中心</span>
+        </a>
+        <a href="#" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span data-i18n="item_community">社区论坛</span>
+        </a>
+      </div>
+      <div class="kali-category">
+        <div class="kali-category-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span data-i18n="cat_tools">工具</span>
+        </div>
+      </div>
+      <div class="kali-category">
+        <div class="kali-category-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span data-i18n="cat_contact">联系</span>
+        </div>
+        <a href="mailto:3299224308@qq.com" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span data-i18n="item_email">电子邮件</span>
+        </a>
+        <a href="https://github.com/lc901" target="_blank" class="kali-item">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+          </svg>
+          <span data-i18n="item_github">GitHub</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 为什么选我们按钮 -->
+  <a href="index-old.html" class="why-btn duang-click pulse" id="whyBtn">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    <span data-i18n="why_us">为什么选我们</span>
+  </a>
+
+  <!-- 语言切换 - 右上角按钮 -->
+  <div class="lang-dropdown" id="lang-dropdown">
+    <button class="lang-btn" id="lang-btn-top" type="button">中文</button>
+    <div class="lang-menu-top" id="lang-menu-top">
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="zh">中文</button>
+      <button type="button" data-lang="ja">日本語</button>
+      <button type="button" data-lang="ko">한국어</button>
+      <button type="button" data-lang="ru">Русский</button>
+      <button type="button" data-lang="de">Deutsch</button>
+      <button type="button" data-lang="fr">Français</button>
+      <button type="button" data-lang="es">Español</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="logo">LC<span>901</span></div>
+    <p class="tagline" data-i18n="tagline">云服务提供商</p>
+
+    <!-- 搜索框 -->
+    <div class="search-container">
+      <input type="text" class="search-box glass duang-click water-drop" id="searchBox" placeholder="搜索页面..." autocomplete="off" data-i18n-placeholder="search_placeholder">
+      <span class="search-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- 导航链接 -->
+    <div class="links-grid">
+      <a href="services.html" class="link-card duang-click water-drop">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="card-text">
+          <span class="card-title" data-i18n="old_home_title">渗透服务</span>
+          <span class="card-desc" data-i18n="old_home_desc">提供渗透测试等专业安全服务</span>
+        </div>
+      </a>
+      <a href="courses.html" class="link-card duang-click water-drop" data-delay="1500">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="card-text">
+          <span class="card-title" data-i18n="courses_title">课程</span>
+          <span class="card-desc" data-i18n="courses_desc">渗透测试课程</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer" data-i18n="footer">&copy; 2026 LC901. 保留所有权利。</div>
+
+  <!-- 主题切换 -->
+  <div class="theme-toggle-wrapper">
+    <span class="theme-label" data-i18n="theme_dark">深色</span>
+    <label class="theme-switch">
+      <input type="checkbox" id="themeSwitch">
+      <span class="theme-slider"></span>
+    </label>
+    <span class="theme-label" data-i18n="theme_light">浅色</span>
+  </div>
+
+  <script>
+    const translations = {
+      en: { tagline:'Penetration Testing Portal', search_placeholder:'Search pages...', old_home_title:'Pentest Services', old_home_desc:'Professional penetration testing & security services', courses_title:'Courses', courses_desc:'Penetration testing courses', footer:'&copy; 2026 LC901. All rights reserved.', theme_dark:'Dark', theme_light:'Light', menu_label:'Menu', cat_services:'Services', item_pentest:'Penetration Testing', item_audit:'Security Audit', item_scan:'Vulnerability Scanning', cat_learning:'Learning', item_courses:'Course Training', item_docs:'Documentation Center', item_community:'Community Forum', cat_tools:'Tools', cat_contact:'Contact', item_email:'Email', item_github:'GitHub', why_us:'Why Choose Us' },
+      zh: { tagline:'云服务提供商', search_placeholder:'搜索页面...', old_home_title:'渗透服务', old_home_desc:'提供渗透测试等专业安全服务', courses_title:'课程', courses_desc:'渗透测试课程', footer:'&copy; 2026 LC901. 保留所有权利。', theme_dark:'深色', theme_light:'浅色', menu_label:'菜单', cat_services:'服务', item_pentest:'网络安全服务', item_audit:'安全审计', item_scan:'漏洞扫描', cat_learning:'学习', item_courses:'课程培训', item_docs:'文档中心', item_community:'社区论坛', cat_tools:'工具', cat_contact:'联系', item_email:'电子邮件', item_github:'GitHub', why_us:'为什么选我们' },
+      ja: { tagline:'ペネトレーションテストポータル', search_placeholder:'ページを検索...', old_home_title:'ペネテストサービス', old_home_desc:'渗透テストを含む専門セキュリティサービス', courses_title:'コース', courses_desc:'ペネトレーションテストコース', footer:'&copy; 2026 LC901. All rights reserved.', theme_dark:'ダーク', theme_light:'ライト', menu_label:'メニュー', cat_services:'サービス', item_pentest:'ペネトレーションテスト', item_audit:'セキュリティ監査', item_scan:'脆弱性スキャン', cat_learning:'学習', item_courses:'コース研修', item_docs:'ドキュメントセンター', item_community:'コミュニティフォーラム', cat_tools:'ツール', cat_contact:'お問い合わせ', item_email:'メール', item_github:'GitHub', why_us:'なぜ私たちを選ぶのか' },
+      ko: { tagline:'침투 테스트 포털', search_placeholder:'페이지 검색...', old_home_title:'침투 테스트 서비스', old_home_desc:'침투 테스트 및 전문 보안 서비스 제공', courses_title:'코스', courses_desc:'침투 테스트 코스', footer:'&copy; 2026 LC901. 모든 권리 보유.', theme_dark:'다크', theme_light:'라이트', menu_label:'메뉴', cat_services:'서비스', item_pentest:'침투 테스트', item_audit:'보안 감사', item_scan:'취약점 스캔', cat_learning:'학습', item_courses:'과정 교육', item_docs:'문서 센터', item_community:'커뮤니티 포럼', cat_tools:'도구', cat_contact:'연락처', item_email:'이메일', item_github:'GitHub', why_us:'왜 우리를 선택하나요?' },
+      ru: { tagline:'Портал пентестинга', search_placeholder:'Поиск страниц...', old_home_title:'Пентест услуги', old_home_desc:'Профессиональные услуги по тестированию на проникновение', courses_title:'Курсы', courses_desc:'Курсы по пентестингу', footer:'&copy; 2026 LC901. Все права защищены.', theme_dark:'Тёмная', theme_light:'Светлая', menu_label:'Меню', cat_services:'Услуги', item_pentest:'Тестирование на проникновение', item_audit:'Аудит безопасности', item_scan:'Сканирование уязвимостей', cat_learning:'Обучение', item_courses:'Курс обучения', item_docs:'Центр документации', item_community:'Форум сообщества', cat_tools:'Инструменты', cat_contact:'Контакты', item_email:'Электронная почта', item_github:'GitHub', why_us:'Почему мы?' },
+      de: { tagline:'Penetrationstest-Portal', search_placeholder:'Seiten suchen...', old_home_title:'Pentest-Dienste', old_home_desc:'Professionelle Penetrationstest & Sicherheitsdienstleistungen', courses_title:'Kurse', courses_desc:'Penetrationstest-Kurse', footer:'&copy; 2026 LC901. Alle Rechte vorbehalten.', theme_dark:'Dunkel', theme_light:'Hell', menu_label:'Menü', cat_services:'Dienste', item_pentest:'Penetrationstest', item_audit:'Sicherheitsaudit', item_scan:'Schwachstellenscan', cat_learning:'Lernen', item_courses:'Kurs Schulung', item_docs:'Dokumentationszentrum', item_community:'Community Forum', cat_tools:'Werkzeuge', cat_contact:'Kontakt', item_email:'E-Mail', item_github:'GitHub', why_us:'Warum wir?' },
+      fr: { tagline:'Portail de tests de pénétration', search_placeholder:'Rechercher des pages...', old_home_title:'Services de pentest', old_home_desc:'Services professionnels de test de pénétration et sécurité', courses_title:'Cours', courses_desc:'Cours de tests de pénétration', footer:'&copy; 2026 LC901. Tous droits réservés.', theme_dark:'Sombre', theme_light:'Clair', menu_label:'Menu', cat_services:'Services', item_pentest:'Test de pénétration', item_audit:'Audit de sécurité', item_scan:'Analyse de vulnérabilités', cat_learning:'Apprentissage', item_courses:'Formation aux cours', item_docs:'Centre de documentation', item_community:'Forum communautaire', cat_tools:'Outils', cat_contact:'Contact', item_email:'E-mail', item_github:'GitHub', why_us:'Pourquoi nous choisir?' },
+      es: { tagline:'Portal de pruebas de penetración', search_placeholder:'Buscar páginas...', old_home_title:'Servicios de pentest', old_home_desc:'Servicios profesionales de pruebas de penetración y seguridad', courses_title:'Cursos', courses_desc:'Cursos de pruebas de penetración', footer:'&copy; 2026 LC901. Todos los derechos reservados.', theme_dark:'Oscuro', theme_light:'Claro', menu_label:'Menú', cat_services:'Servicios', item_pentest:'Prueba de penetración', item_audit:'Auditoría de seguridad', item_scan:'Escaneo de vulnerabilidades', cat_learning:'Aprendizaje', item_courses:'Formación de cursos', item_docs:'Centro de documentación', item_community:'Foro comunitario', cat_tools:'Herramientas', cat_contact:'Contacto', item_email:'Correo electrónico', item_github:'GitHub', why_us:'¿Por qué elegirnos?' }
+    };
+
+    const langNames = { en:'English', zh:'中文', ja:'日本語', ko:'한국어', ru:'Русский', de:'Deutsch', fr:'Français', es:'Español' };
+    let currentLang = localStorage.getItem('lc901-lang') || 'zh';
+
+    function t(key) { return (translations[currentLang] && translations[currentLang][key]) || translations['en'][key] || key; }
+
+    function setLang(lang) {
+      if (!translations[lang]) return;
+      currentLang = lang;
+      localStorage.setItem('lc901-lang', lang);
+      applyTranslations();
+      updateLangBtn();
+      closeLangMenu();
+      rebuildSearch();
+    }
+
+    function updateLangBtn() {
+      const btn = document.getElementById('lang-btn');
+      if (btn) btn.textContent = langNames[currentLang] || 'English';
+      const btnTop = document.getElementById('lang-btn-top');
+      if (btnTop) btnTop.textContent = langNames[currentLang] || 'English';
+      document.querySelectorAll('#lang-menu button[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+    }
+
+    function applyTranslations() {
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-placeholder')); });
+      document.documentElement.lang = currentLang === 'en' ? 'en' : 'zh-CN';
+    }
+
+    const langMenuTop = document.getElementById('lang-menu-top');
+    const langBtnTop = document.getElementById('lang-btn-top');
+
+    if (langMenuTop) langMenuTop.addEventListener('click', e => { if (e.target.dataset.lang) setLang(e.target.dataset.lang); });
+    if (langBtnTop) langBtnTop.addEventListener('click', e => { e.stopPropagation(); langMenuTop.classList.toggle('open'); });
+
+    function closeLangMenu() { if (langMenuTop) langMenuTop.classList.remove('open'); }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.lang-dropdown')) closeLangMenu();
+    });
+
+    // Kali-style sidebar menu toggle
+    const kaliToggle = document.getElementById('kaliToggle');
+    const kaliMenu = document.getElementById('kaliMenu');
+    if (kaliToggle && kaliMenu) {
+      kaliToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+        kaliMenu.classList.toggle('open');
+      });
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.kali-sidebar')) {
+          kaliToggle.classList.remove('active');
+          kaliMenu.classList.remove('open');
+        }
+      });
+    }
+
+    const searchBox = document.getElementById('searchBox');
+    const searchResults = document.getElementById('searchResults');
+
+    const pages = [
+      { titleKey:'old_home_title', descKey:'old_home_desc', url:'index-old.html', keywords:['渗透','pentest','penetration','security','service'],
+        svg:'<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' },
+      { titleKey:'courses_title', descKey:'courses_desc', url:'courses.html', keywords:['课程','course','training','learn','study'],
+        svg:'<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>' },
+      { titleKey:'nav_services', descKey:'services_hero_desc', url:'services.html', keywords:['服务','service','cybersecurity','professional'],
+        svg:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' }
+    ];
+
+    function rebuildSearch() {
+      const query = searchBox.value.trim().toLowerCase();
+      if (!query) { searchResults.classList.remove('active'); return; }
+      const filtered = pages.filter(p => {
+        const title = t(p.titleKey).toLowerCase(), desc = t(p.descKey).toLowerCase();
+        const kw = (p.keywords || []).join(' ').toLowerCase();
+        return title.includes(query) || desc.includes(query) || kw.includes(query);
+      });
+      if (filtered.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item"><span style="opacity:0.5;">-</span> 无搜索结果</div>';
+      } else {
+        searchResults.innerHTML = filtered.map(p =>
+          `<a href="${p.url}" class="search-result-item" data-url="${p.url}">${p.svg}<span>${t(p.titleKey)}</span><span style="margin-left:auto;font-size:0.78rem;color:#555;">${t(p.descKey)}</span></a>`
+        ).join('');
+      }
+      searchResults.classList.add('active');
+    }
+
+    searchBox.addEventListener('input', rebuildSearch);
+    searchBox.addEventListener('focus', rebuildSearch);
+    searchBox.addEventListener('blur', () => {
+      setTimeout(() => searchResults.classList.remove('active'), 150);
+    });
+    searchBox.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const firstResult = searchResults.querySelector('.search-result-item[data-url]');
+        if (firstResult) window.location.href = firstResult.dataset.url;
+      }
+    });
+    searchResults.addEventListener('click', e => {
+      const link = e.target.closest('.search-result-item');
+      if (link && link.dataset.url) {
+        window.location.href = link.dataset.url;
+      }
+    });
+    document.addEventListener('click', e => { if (!e.target.closest('.search-container')) searchResults.classList.remove('active'); });
+
+    const themeSwitch = document.getElementById('themeSwitch');
+    const savedTheme = localStorage.getItem('lc901-theme');
+    if (savedTheme === 'light') { document.body.classList.add('light'); if (themeSwitch) themeSwitch.checked = true; }
+    if (themeSwitch) {
+      themeSwitch.addEventListener('change', function() {
+        if (this.checked) { document.body.classList.add('light'); localStorage.setItem('lc901-theme','light'); }
+        else { document.body.classList.remove('light'); localStorage.setItem('lc901-theme','dark'); }
+      });
+    }
+
+    // DuangDuang 点击回弹 - 按住压缩,松开duang (排除语言下拉菜单按钮)
+    document.querySelectorAll('.duang-click').forEach(el => {
+      if (el.closest('.lang-dropdown') || el.id === 'lang-btn-top') return;
+      el.addEventListener('mousedown', () => el.classList.add('duang-pressed'));
+      el.addEventListener('mouseup', () => {
+        el.classList.remove('duang-pressed');
+        el.classList.add('duang-anim');
+        el.addEventListener('animationend', () => el.classList.remove('duang-anim'), { once: true });
+      });
+      el.addEventListener('mouseleave', () => {
+        el.classList.remove('duang-pressed');
+        el.classList.remove('duang-anim');
+      });
+    });
+
+    applyTranslations();
+    updateLangBtn();
+
+    // 液态玻璃扭曲效果 - 应用到每个卡片
+    (function() {
+      'use strict';
+      
+      function smoothStep(a, b, t) {
+        t = Math.max(0, Math.min(1, (t - a) / (b - a)));
+        return t * t * (3 - 2 * t);
+      }
+      
+      function length(x, y) {
+        return Math.sqrt(x * x + y * y);
+      }
+      
+      function roundedRectSDF(x, y, width, height, radius) {
+        const qx = Math.abs(x) - width + radius;
+        const qy = Math.abs(y) - height + radius;
+        return Math.min(Math.max(qx, qy), 0) + length(Math.max(qx, 0), Math.max(qy, 0)) - radius;
+      }
+
+      // 共享光源方向 - 固定在左上角,两个卡片折射一致
+      const lightSourceX = 0.3;
+      const lightSourceY = 0.3;
+
+      // 为每个卡片创建液态玻璃
+      const cards = document.querySelectorAll('.link-card');
+      cards.forEach((card, index) => {
+        const id = 'lg-' + index;
+        const w = 400;
+        const h = 120;
+        
+        // 创建SVG滤镜
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '0');
+        svg.setAttribute('height', '0');
+        svg.style.position = 'fixed';
+        svg.style.top = '0';
+        svg.style.left = '0';
+        svg.style.pointerEvents = 'none';
+        svg.style.zIndex = '-1';
+        
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        filter.setAttribute('id', id + '_filter');
+        filter.setAttribute('filterUnits', 'userSpaceOnUse');
+        filter.setAttribute('colorInterpolationFilters', 'sRGB');
+        filter.setAttribute('x', '0');
+        filter.setAttribute('y', '0');
+        filter.setAttribute('width', w.toString());
+        filter.setAttribute('height', h.toString());
+        
+        const feImage = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
+        feImage.setAttribute('id', id + '_map');
+        feImage.setAttribute('width', w.toString());
+        feImage.setAttribute('height', h.toString());
+        
+        const feDisplacement = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
+        feDisplacement.setAttribute('in', 'SourceGraphic');
+        feDisplacement.setAttribute('in2', id + '_map');
+        feDisplacement.setAttribute('xChannelSelector', 'R');
+        feDisplacement.setAttribute('yChannelSelector', 'G');
+        feDisplacement.setAttribute('scale', '30');
+        
+        filter.appendChild(feImage);
+        filter.appendChild(feDisplacement);
+        defs.appendChild(filter);
+        svg.appendChild(defs);
+        document.body.appendChild(svg);
+        
+        // 创建隐藏canvas生成扭曲贴图
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.display = 'none';
+        const ctx = canvas.getContext('2d');
+        document.body.appendChild(canvas);
+        
+        // 鼠标位置
+        let mouseX = lightSourceX, mouseY = lightSourceY;
+        let isOverCard = false;
+        
+        card.addEventListener('mouseenter', () => { isOverCard = true; });
+        card.addEventListener('mouseleave', () => { isOverCard = false; });
+        
+        document.addEventListener('mousemove', (e) => {
+          if (!isOverCard) return;
+          const rect = card.getBoundingClientRect();
+          mouseX = (e.clientX - rect.left) / rect.width;
+          mouseY = (e.clientY - rect.top) / rect.height;
+        });
+        
+        // 生成扭曲贴图
+        function updateDisplacement() {
+          const imageData = ctx.createImageData(w, h);
+          const data = imageData.data;
+          
+          for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              const uvX = x / w;
+              const uvY = y / h;
+              
+              const ix = uvX - 0.5;
+              const iy = uvY - 0.5;
+              const dist = roundedRectSDF(ix, iy, 0.45, 0.01, 0.14);
+              const disp = smoothStep(0.8, 0, dist - 0.15);
+              const scaled = smoothStep(0, 1, disp);
+              
+              // 基于统一光源方向偏移 - 两个卡片一致
+              const mouseOffsetX = (lightSourceX - 0.5) * 0.15 * scaled;
+              const mouseOffsetY = (lightSourceY - 0.5) * 0.15 * scaled;
+              
+              const dx = mouseOffsetX * w;
+              const dy = mouseOffsetY * h;
+              const maxScale = 10;
+              
+              const idx = (y * w + x) * 4;
+              data[idx] = ((dx / maxScale) + 0.5) * 255;
+              data[idx + 1] = ((dy / maxScale) + 0.5) * 255;
+              data[idx + 2] = 0;
+              data[idx + 3] = 255;
+            }
+          }
+          
+          ctx.putImageData(imageData, 0, 0);
+          feImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', canvas.toDataURL());
+        }
+        
+        // 应用SVG滤镜到卡片
+        card.style.backdropFilter = `url(#${id}_filter) blur(0.3px)`;
+        card.style.webkitBackdropFilter = `url(#${id}_filter) blur(0.3px)`;
+        
+        // 动画循环
+        function animate() {
+          updateDisplacement();
+          requestAnimationFrame(animate);
+        }
+        animate();
+      });
+
+      // 1.5秒延迟跳转
+      document.querySelectorAll('.link-card[data-delay]').forEach(card => {
+        card.addEventListener('click', function(e) {
+          e.preventDefault();
+          const delay = parseInt(this.getAttribute('data-delay')) || 2500;
+          setTimeout(() => { window.location.href = this.href; }, delay);
+        });
+      });
+    })();
+
+    // === GSAP Animations ===
+    document.addEventListener('DOMContentLoaded', function() {
+      // 等待 GSAP 加载完成
+      if (typeof gsap === 'undefined') return;
+
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Logo 动画 - 从上方滑入并缩放
+      tl.from('.logo', {
+        y: -60,
+        opacity: 0,
+        scale: 0.8,
+        duration: 1.2,
+        ease: 'back.out(1.7)'
+      })
+      // Tagline 淡入
+      .from('.tagline', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8
+      }, '-=0.6')
+      // 搜索框动画
+      .from('.search-container', {
+        opacity: 0,
+        y: 30,
+        scale: 0.95,
+        duration: 0.8
+      }, '-=0.4')
+      // 链接卡片依次淡入(保持原大小和位置)
+      .from('.link-card', {
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: 'power2.out'
+      }, '-=0.3')
+      // 底部 footer 淡入
+      .from('.footer', {
+        opacity: 0,
+        y: 20,
+        duration: 0.6
+      }, '-=0.3')
+      // 主题切换按钮动画
+      .from('.theme-toggle-wrapper', {
+        opacity: 0,
+        x: 50,
+        duration: 0.6
+      }, '-=0.3')
+      // Kali 菜单按钮动画
+      .from('.kali-sidebar', {
+        opacity: 0,
+        x: -50,
+        duration: 0.6
+      }, '-=0.4')
+      // 语言下拉菜单动画
+      .from('.lang-dropdown', {
+        opacity: 0,
+        x: 50,
+        duration: 0.6
+      }, '-=0.4');
+
+      // 背景光球动画增强
+      gsap.to('.bg-orbs::before', {
+        opacity: 0.7,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      });
+
+      // 链接卡片悬停增强动画
+      document.querySelectorAll('.link-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          gsap.to(this, {
+            scale: 1.05,
+            y: -8,
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        });
+        card.addEventListener('mouseleave', function() {
+          gsap.to(this, {
+            scale: 1,
+            y: 0,
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        });
+      });
+
+      // Logo 持续微动画
+      gsap.to('.logo', {
+        textShadow: '0 0 80px rgba(0, 100, 220, 0.4)',
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      });
+
+      // 搜索框聚焦动画
+      const searchBox = document.getElementById('searchBox');
+      if (searchBox) {
+        searchBox.addEventListener('focus', function() {
+          gsap.to(this, {
+            boxShadow: '0 0 0 4px rgba(0, 100, 220, 0.15), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 80px rgba(0, 100, 220, 0.12)',
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        });
+        searchBox.addEventListener('blur', function() {
+          gsap.to(this, {
+            boxShadow: '',
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        });
+      }
+    });
+
+    // === Anime.js Animations ===
+    if (typeof anime !== 'undefined') {
+      // 背景光球浮动动画
+      anime({
+        targets: '.bg-orbs::before',
+        translateX: [
+          { value: -30, duration: 4000, easing: 'easeInOutSine' },
+          { value: 30, duration: 4000, easing: 'easeInOutSine' }
+        ],
+        translateY: [
+          { value: -20, duration: 5000, easing: 'easeInOutSine' },
+          { value: 20, duration: 5000, easing: 'easeInOutSine' }
+        ],
+        loop: true,
+        direction: 'alternate'
+      });
+
+      // 链接卡片波浪式入场动画
+      anime({
+        targets: '.link-card',
+        opacity: [0, 1],
+        translateY: [40, 0],
+        scale: [0.9, 1],
+        delay: anime.stagger(150, { start: 800 }),
+        duration: 800,
+        easing: 'easeOutExpo'
+      });
+
+      // 搜索框聚焦脉冲动画
+      const searchBox = document.getElementById('searchBox');
+      if (searchBox) {
+        searchBox.addEventListener('focus', function() {
+          anime({
+            targets: this,
+            boxShadow: [
+              '0 0 0 4px rgba(0, 100, 220, 0.1)',
+              '0 0 0 8px rgba(0, 100, 220, 0.05)',
+              '0 0 0 4px rgba(0, 100, 220, 0.1)'
+            ],
+            duration: 1500,
+            easing: 'easeInOutSine',
+            loop: true
+          });
+        });
+        searchBox.addEventListener('blur', function() {
+          anime.remove(this);
+          this.style.boxShadow = '';
+        });
+      }
+
+      // Logo 呼吸动画
+      anime({
+        targets: '.logo',
+        textShadow: [
+          '0 0 60px rgba(0, 100, 220, 0.25)',
+          '0 0 80px rgba(0, 100, 220, 0.4)',
+          '0 0 60px rgba(0, 100, 220, 0.25)'
+        ],
+        duration: 3000,
+        easing: 'easeInOutSine',
+        loop: true
+      });
+
+      // 标签行淡入动画
+      anime({
+        targets: '.tagline',
+        opacity: [0, 0.35],
+        translateY: [15, 0],
+        delay: 600,
+        duration: 800,
+        easing: 'easeOutExpo'
+      });
+    }
+  </script>
+</body>
+</html>
