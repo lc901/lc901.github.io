@@ -516,9 +516,8 @@ const courses = [
 ];
 
 // === API Base URL ===
-const API_BASE = window.location.hostname === 'localhost'
-  ? 'http://localhost:3000/api'
-  : 'https://api.lc901.com/api';
+// Cloudflare Workers backend. Override with window.LC901_API_BASE for local testing.
+const API_BASE = window.LC901_API_BASE || 'https://bitter-queen-5d76.3299224308.workers.dev/api';
 
 // === i18n ===
 let currentLang = localStorage.getItem('lc901-lang') || 'en';
@@ -780,27 +779,24 @@ if (regForm) {
     }
 
     try {
-      // Fetch CSRF token first
-      var csrfRes = await fetch(API_BASE + '/csrf-token');
-      var csrfData = await csrfRes.json();
-      var csrfToken = csrfData.csrfToken;
-
-      var res = await fetch(API_BASE + '/register', {
+      var res = await fetch(API_BASE + '/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name, email: email, phone: phone, courseId: courseId })
       });
 
-      var data = await res.json();
+      var data = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        data = null;
+      }
 
-      if (res.ok) {
+      if (res.ok && (!data || data.ok !== false)) {
         showMessage(t('reg_success'), true);
         regForm.style.display = 'none';
       } else {
-        showMessage(data.error || 'Registration failed.', false);
+        showMessage((data && (data.err || data.error)) || t('reg_error_network'), false);
       }
     } catch (err) {
       showMessage(t('reg_error_network'), false);
