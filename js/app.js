@@ -65,7 +65,8 @@ const translations = {
     why_exp_title: 'Rich Experience', why_exp_desc: 'Years of industry experience serving clients in finance, government, technology and multiple sectors.',
     why_tool_title: 'Proprietary Tools', why_tool_desc: 'Self-developed security testing toolchain to improve detection efficiency and accuracy.',
     why_support_title: '24/7 Support', why_support_desc: 'Round-the-clock incident response service to ensure security issues are resolved promptly.',
-    hours: 'h'
+    hours: 'h',
+    detail_btn: 'Details', detail_topics_title: 'Course Outline', detail_outcomes_title: 'What You\'ll Learn', detail_audience_title: 'Who It\'s For', detail_close: 'Close'
   },
   zh: {
     nav_home: '首页', nav_courses: '课程', nav_about: '关于', nav_contact: '联系',
@@ -127,7 +128,8 @@ const translations = {
     why_exp_title: '丰富经验', why_exp_desc: '多年行业经验，服务金融、政府、科技等多个领域客户。',
     why_tool_title: '自有工具', why_tool_desc: '自主研发安全测试工具链，提升检测效率和准确性。',
     why_support_title: '全天候支持', why_support_desc: '7x24 小时应急响应服务，确保安全问题及时解决。',
-    contact_title: '联系我们', contact_subtitle: '有任何安全问题？随时与我们取得联系'
+    contact_title: '联系我们', contact_subtitle: '有任何安全问题？随时与我们取得联系',
+    detail_btn: '详情', detail_topics_title: '课程大纲', detail_outcomes_title: '你将学到', detail_audience_title: '适合人群', detail_close: '关闭'
   },
   ja: {
     nav_home: 'ホーム', nav_courses: 'コース', nav_about: '概要', nav_contact: 'お問い合わせ',
@@ -189,7 +191,8 @@ const translations = {
     why_exp_title: '豊富な経験', why_exp_desc: '金融、政府、テクノロジーなど複数の分野のクライアントに多年の業界経験。',
     why_tool_title: '独自ツール', why_tool_desc: '独自のセキュリティテストツールチェーンを開発し、検出効率と精度を向上。',
     why_support_title: '24/7 サポート', why_support_desc: '年中無休のインシデント対応サービスで、セキュリティ問題を迅速に解決。',
-    contact_title: 'お問い合わせ', contact_subtitle: 'セキュリティのご不明点はいつでもご連絡ください'
+    contact_title: 'お問い合わせ', contact_subtitle: 'セキュリティのご不明点はいつでもご連絡ください',
+    detail_btn: '詳細', detail_topics_title: 'コース概要', detail_outcomes_title: '身に付くスキル', detail_audience_title: '対象者', detail_close: '閉じる'
   },
   ko: {
     nav_home: '홈', nav_courses: '코스', nav_about: '소개', nav_contact: '연락처',
@@ -251,7 +254,8 @@ const translations = {
     why_exp_title: '풍부한 경험', why_exp_desc: '금융, 정부, 기술 등 다양한 분야의 고객에게 수년간의 산업 경험.',
     why_tool_title: '독자 도구', why_tool_desc: '자체 개발 보안 테스트 도구체인으로 감지 효율성과 정확성 향상.',
     why_support_title: '24/7 지원', why_support_desc: '연중무휴 사고 대응 서비스로 보안 문제를 신속하게 해결.',
-    contact_title: '문의하기', contact_subtitle: '보안 관련 문의가 있으시면 언제든지 연락하세요'
+    contact_title: '문의하기', contact_subtitle: '보안 관련 문의가 있으시면 언제든지 연락하세요',
+    detail_btn: '상세 정보', detail_topics_title: '강의 개요', detail_outcomes_title: '무엇을 배우는가', detail_audience_title: '대상', detail_close: '닫기'
   },
   ru: {
     nav_home: 'Главная', nav_courses: 'Курсы', nav_about: 'О нас', nav_contact: 'Контакты',
@@ -313,7 +317,8 @@ const translations = {
     why_exp_title: 'Богатый опыт', why_exp_desc: 'Многолетний опыт работы с клиентами в финансах, государстве, технологиях и других секторах.',
     why_tool_title: 'Собственные инструменты', why_tool_desc: 'Самостоятельно разработанный инструментарий для повышения эффективности и точности обнаружения.',
     why_support_title: 'Поддержка 24/7', why_support_desc: 'Круглосуточная служба реагирования на инциденты для оперативного решения проблем безопасности.',
-    contact_title: 'Свяжитесь с нами', contact_subtitle: 'Есть вопросы по безопасности? Свяжитесь с нами в любое время'
+    contact_title: 'Свяжитесь с нами', contact_subtitle: 'Есть вопросы по безопасности? Свяжитесь с нами в любое время',
+    detail_btn: 'Подробнее', detail_topics_title: 'Программа курса', detail_outcomes_title: 'Чему вы научитесь', detail_audience_title: 'Для кого', detail_close: 'Закрыть'
   },
   de: {
     nav_home: 'Startseite', nav_courses: 'Kurse', nav_about: 'Über uns', nav_contact: 'Kontakt',
@@ -374,7 +379,8 @@ const translations = {
     why_exp_title: 'Reiche Erfahrung', why_exp_desc: 'Jahrelange Branchenerfahrung mit Kunden in Finanzwesen, Regierung, Technologie und weiteren Sektoren.',
     why_tool_title: 'Eigene Tools', why_tool_desc: 'Eigenentwickelte Sicherheitstest-Toolchain zur Verbesserung von Effizienz und Genauigkeit.',
     why_support_title: '24/7 Support', why_support_desc: 'Rund-um-die-Uhr-Incident-Response-Service für schnelle Lösung von Sicherheitsproblemen.',
-    contact_title: 'Kontakt', contact_subtitle: 'Sicherheitsbedenken? Kontaktieren Sie uns jederzeit'
+    contact_title: 'Kontakt', contact_subtitle: 'Sicherheitsbedenken? Kontaktieren Sie uns jederzeit',
+    detail_btn: 'Details', detail_topics_title: 'Kursübersicht', detail_outcomes_title: 'Das lernst du', detail_audience_title: 'Für wen', detail_close: 'Schließen'
   },
   fr: {
     nav_home: 'Accueil', nav_courses: 'Cours', nav_about: 'À propos', nav_contact: 'Contact',
@@ -435,7 +441,8 @@ const translations = {
     why_exp_title: 'Grande expérience', why_exp_desc: 'Années d\\u0027expérience sectorielle servant des clients dans la finance, le gouvernement, la technologie et d\\u0027autres secteurs.',
     why_tool_title: 'Outils propriétaires', why_tool_desc: 'Chaîne d\\u0027outils de test de sécurité autodéveloppée pour améliorer l\\u0027efficacité et la précision.',
     why_support_title: 'Support 24/7', why_support_desc: 'Service de réponse aux incidents disponible 24h/24 et 7j/7 pour résoudre rapidement les problèmes de sécurité.',
-    contact_title: 'Contactez-nous', contact_subtitle: 'Des préoccupations en matière de sécurité ? Contactez-nous à tout moment'
+    contact_title: 'Contactez-nous', contact_subtitle: 'Des préoccupations en matière de sécurité ? Contactez-nous à tout moment',
+    detail_btn: 'Détails', detail_topics_title: 'Programme du cours', detail_outcomes_title: 'Ce que vous apprendrez', detail_audience_title: 'Pour qui', detail_close: 'Fermer'
   },
   es: {
     nav_home: 'Inicio', nav_courses: 'Cursos', nav_about: 'Acerca de', nav_contact: 'Contacto',
@@ -496,7 +503,8 @@ const translations = {
     why_exp_title: 'Amplia experiencia', why_exp_desc: 'Años de experiencia en la industria sirviendo clientes en finanzas, gobierno, tecnología y otros sectores.',
     why_tool_title: 'Opciones propias', why_tool_desc: 'Chain de herramientas de prueba de seguridad autodesarrollada para mejorar la eficiencia y precisión.',
     why_support_title: 'Soporte 24/7', why_support_desc: 'Servicio de respuesta a incidentes las 24 horas para resolver problemas de seguridad rápidamente.',
-    contact_title: 'Contáctanos', contact_subtitle: '¿Preocupaciones de seguridad? Contáctanos en cualquier momento'
+    contact_title: 'Contáctanos', contact_subtitle: '¿Preocupaciones de seguridad? Contáctanos en cualquier momento',
+    detail_btn: 'Detalles', detail_topics_title: 'Temario del curso', detail_outcomes_title: 'Lo que aprenderás', detail_audience_title: '¿Para quién?', detail_close: 'Cerrar'
   }
 };
 
@@ -515,6 +523,70 @@ const courses = [
   { id: 'web-100', level: 'advanced', hours: 40, price: '$2' }
 ];
 
+// === Course Detail Syllabus (outline content per language) ===
+const courseDetails = {
+  'shl-100': {
+    en: { topics: ['Linux shell & terminal basics','Filesystem, permissions & users','Pipes, redirection & grep','Intro to shell scripting'], outcomes: ['Navigate the Linux command line confidently','Manage files, permissions and processes','Chain commands with pipes and redirection','Write simple automation scripts'], audience: 'Absolute beginners new to Linux and security.' },
+    zh: { topics: ['Linux Shell 与终端基础','文件系统、权限与用户','管道、重定向与 grep','Shell 脚本入门'], outcomes: ['熟练使用 Linux 命令行','管理文件、权限与进程','用管道和重定向组合命令','编写简单的自动化脚本'], audience: '零基础、刚接触 Linux 与安全的学员。' },
+    ja: { topics: ['Linux シェルとターミナルの基礎','ファイルシステム・権限・ユーザー','パイプ・リダイレクト・grep','シェルスクリプト入門'], outcomes: ['Linux コマンドラインを自由に操る','ファイル・権限・プロセスを管理する','パイプとリダイレクトでコマンドを組み合わせる','簡単な自動化スクリプトを書く'], audience: 'Linux とセキュリティを初めて学ぶ初心者向け。' },
+    ko: { topics: ['Linux 셸과 터미널 기초','파일시스템, 권한, 사용자','파이프, 리디렉션, grep','셸 스크립트 입문'], outcomes: ['Linux 명령줄을 능숙하게 사용','파일·권한·프로세스 관리','파이프와 리디렉션으로 명령 조합','간단한 자동화 스크립트 작성'], audience: 'Linux와 보안을 처음 접하는 초보자.' },
+    ru: { topics: ['Основы Linux-шелла и терминала','Файловая система, права, пользователи','Каналы, перенаправление, grep','Введение в shell-скрипты'], outcomes: ['Уверенно работать в командной строке Linux','Управлять файлами, правами и процессами','Комбинировать команды каналами и перенаправлением','Писать простые скрипты автоматизации'], audience: 'Для новичков, впервые работающих с Linux и безопасностью.' },
+    de: { topics: ['Linux-Shell- & Terminal-Grundlagen','Dateisystem, Berechtigungen, Benutzer','Pipes, Umleitung & grep','Einführung ins Shell-Scripting'], outcomes: ['Sicher durch die Linux-Kommandozeile','Dateien, Rechte und Prozesse verwalten','Befehle mit Pipes/Umleitung kombinieren','Einfache Automatisierungsskripte schreiben'], audience: 'Für Anfänger, neu in Linux und Security.' },
+    fr: { topics: ['Bases du shell et du terminal Linux','Système de fichiers, permissions, utilisateurs','Tuyaux, redirections et grep','Introduction au script shell'], outcomes: ['Maîtriser la ligne de commande Linux','Gérer fichiers, permissions et processus','Combiner les commandes via tuyaux/redirections','Écrire des scripts d\'automatisation simples'], audience: 'Débutants découvrant Linux et la sécurité.' },
+    es: { topics: ['Fundamentos de shell y terminal Linux','Sistema de archivos, permisos, usuarios','Tuberías, redirección y grep','Introducción a los scripts de shell'], outcomes: ['Manejar con soltura la línea de comandos Linux','Gestionar archivos, permisos y procesos','Combinar comandos con tuberías/redirección','Escribir scripts de automatización simples'], audience: 'Principiantes nuevos en Linux y seguridad.' }
+  },
+  'shl-200': {
+    en: { topics: ['Advanced bash scripting','Regex, awk & sed','Text-processing pipelines','Automating security workflows'], outcomes: ['Write robust, multi-function scripts','Parse and transform text with regex/awk/sed','Build reusable automation tooling','Streamline repetitive security tasks'], audience: 'Learners comfortable with the basics who want to automate.' },
+    zh: { topics: ['高级 Bash 脚本','正则、awk 与 sed','文本处理管道','安全工作流自动化'], outcomes: ['编写健壮的多功能脚本','用正则/awk/sed 解析与转换文本','构建可复用的自动化工具','把重复的安全任务自动化'], audience: '掌握基础、希望提升自动化的学员。' },
+    ja: { topics: ['高度な Bash スクリプティング','正規表現・awk・sed','テキスト処理パイプライン','セキュリティワークフローの自動化'], outcomes: ['堅牢で多機能なスクリプトを書く','正規表現/awk/sed でテキストを解析・変換する','再利用可能な自動化ツールを作る','繰り返しのセキュリティ作業を効率化する'], audience: '基礎を習得し自動化を深めたい学習者向け。' },
+    ko: { topics: ['고급 Bash 스크립팅','정규식, awk, sed','텍스트 처리 파이프라인','보안 워크플로우 자동화'], outcomes: ['견고하고 다기능한 스크립트 작성','정규식/awk/sed로 텍스트 파싱 및 변환','재사용 가능한 자동화 도구 제작','반복 보안 작업 자동화'], audience: '기초를 익히고 자동화를 확장하려는 학습자.' },
+    ru: { topics: ['Продвинутый Bash-скриптинг','Регулярные выражения, awk и sed','Конвейеры обработки текста','Автоматизация процессов безопасности'], outcomes: ['Писать надёжные многофункциональные скрипты','Анализировать и преобразовывать текст через regex/awk/sed','Создавать переиспользуемые инструменты','Автоматизировать рутинные задачи'], audience: 'Для тех, кто освоил базу и хочет автоматизировать.' },
+    de: { topics: ['Fortgeschrittenes Bash-Scripting','Regex, awk & sed','Textverarbeitungs-Pipelines','Sicherheits-Workflows automatisieren'], outcomes: ['Robuste, funktionsreiche Skripte schreiben','Text mit Regex/awk/sed parsen und wandeln','Wiederverwendbare Tools erstellen','Routinen automatisieren'], audience: 'Für Lernende mit Grundlagen, die automatisieren wollen.' },
+    fr: { topics: ['Scripting Bash avancé','Regex, awk et sed','Pipelines de traitement de texte','Automatisation des flux de sécurité'], outcomes: ['Écrire des scripts robustes','Analyser et transformer le texte (regex/awk/sed)','Créer des outils réutilisables','Automatiser les tâches répétitives'], audience: 'Apprenants à l\'aise avec les bases voulant automatiser.' },
+    es: { topics: ['Scripting Bash avanzado','Regex, awk y sed','Pipelines de procesamiento de texto','Automatización de flujos de seguridad'], outcomes: ['Escribir scripts robustos y multifuncionales','Parsear y transformar texto con regex/awk/sed','Crear herramientas reutilizables','Automatizar tareas repetitivas'], audience: 'Estudiantes con bases que quieren automatizar.' }
+  },
+  'sql-100': {
+    en: { topics: ['SQL & database fundamentals','Union-based injection','Blind & time-based injection','WAF bypass & defense'], outcomes: ['Understand how SQL injection arises','Extract data via union and error techniques','Exploit blind and time-based injection','Apply and recommend mitigations'], audience: 'Web developers and testers with basic SQL knowledge.' },
+    zh: { topics: ['SQL 与数据库基础','联合查询注入','盲注与时间盲注','WAF 绕过与防御'], outcomes: ['理解 SQL 注入的成因','通过联合与报错技术提取数据','利用盲注与时间盲注','实施并给出修复建议'], audience: '具备基本 SQL 知识的 Web 开发者与测试人员。' },
+    ja: { topics: ['SQL とデータベースの基礎','ユニオンベースのインジェクション','ブラインド・タイムベースのインジェクション','WAF 回避と防御'], outcomes: ['SQL インジェクションの発生原理を理解する','ユニオンとエラー手法でデータを抽出する','ブラインド/タイムベースを悪用する','対策の実装と推奨ができる'], audience: '基本的な SQL 知識のある Web 開発者・テスター向け。' },
+    ko: { topics: ['SQL 및 데이터베이스 기초','유니온 기반 인젝션','블라인드 및 타임베이스 인젝션','WAF 우회 및 방어'], outcomes: ['SQL 인젝션의 원리 이해','유니온과 에러 기법으로 데이터 추출','블라인드/타임베이스 악용','완화책 적용 및 권고'], audience: '기본 SQL 지식을 갖춘 웹 개발자·테스터.' },
+    ru: { topics: ['Основы SQL и баз данных','Union-инъекции','Слепые и time-based инъекции','Обход WAF и защита'], outcomes: ['Понимать природу SQL-инъекций','Извлекать данные через union и ошибки','Использовать слепые и time-методы','Применять меры защиты и рекомендации'], audience: 'Для веб-разработчиков и тестировщиков со знанием SQL.' },
+    de: { topics: ['SQL & Datenbank-Grundlagen','Union-basierte Injection','Blind & Time-based Injection','WAF-Umgehung & Abwehr'], outcomes: ['Entstehung von SQL-Injection verstehen','Daten via Union/Fehler auslesen','Blind- und Time-Techniken nutzen','Gegenmaßnahmen umsetzen & empfehlen'], audience: 'Für Web-Entwickler & Tester mit SQL-Grundlagen.' },
+    fr: { topics: ['Bases SQL et bases de données','Injection par union','Injection blind et temporelle','Contournement WAF et défense'], outcomes: ['Comprendre l\'origine des injections SQL','Extraire des données via union/erreurs','Exploiter le blind et le temporel','Appliquer et recommander des correctifs'], audience: 'Développeurs et testeurs web avec notions de SQL.' },
+    es: { topics: ['Fundamentos de SQL y bases de datos','Inyección por union','Inyección blind y por tiempo','Evasión de WAF y defensa'], outcomes: ['Entender el origen de la inyección SQL','Extraer datos vía union y errores','Explotar blind y por tiempo','Aplicar y recomendar mitigaciones'], audience: 'Desarrolladores y testers web con nociones de SQL.' }
+  },
+  'pkt-100': {
+    en: { topics: ['Networking & the OSI model','Wireshark interface & filters','TCP/IP and common protocols','Reading real captures'], outcomes: ['Capture and inspect network traffic','Use display filters to isolate data','Understand the TCP/IP handshake and flows','Spot anomalies in packet traces'], audience: 'Beginners interested in network analysis.' },
+    zh: { topics: ['网络与 OSI 模型回顾','Wireshark 界面与过滤器','TCP/IP 与常见协议','读取真实抓包'], outcomes: ['捕获并分析网络流量','使用显示过滤器定位数据','理解 TCP/IP 握手与通信流程','在数据包中发现异常'], audience: '对网络分析感兴趣的入门学员。' },
+    ja: { topics: ['ネットワークと OSI モデルの復習','Wireshark の画面とフィルタ','TCP/IP と主要プロトコル','実キャプチャの読み方'], outcomes: ['トラフィックを捕捉して分析する','表示フィルタでデータを抽出する','TCP/IP ハンドシェイクと通信を理解する','パケットから異常を発見する'], audience: 'ネットワーク分析に興味のある初心者向け。' },
+    ko: { topics: ['네트워킹과 OSI 모델 복습','Wireshark 인터페이스와 필터','TCP/IP 및 주요 프로토콜','실제 캡처 읽기'], outcomes: ['트래픽을 캡처하고 분석','표시 필터로 데이터 분리','TCP/IP 핸드셰이크와 흐름 이해','패킷에서 이상 징후 발견'], audience: '네트워크 분석에 관심 있는 초보자.' },
+    ru: { topics: ['Сети и модель OSI','Интерфейс и фильтры Wireshark','TCP/IP и распространённые протоколы','Чтение реальных дампов'], outcomes: ['Захватывать и анализировать трафик','Изолировать данные фильтрами отображения','Понимать handshake и сессии TCP/IP','Находить аномалии в пакетах'], audience: 'Для новичков в сетевом анализе.' },
+    de: { topics: ['Netzwerk & OSI-Modell','Wireshark-Oberfläche & Filter','TCP/IP & gängige Protokolle','Echte Mitschnitte lesen'], outcomes: ['Netzwerk-Traffic erfassen & prüfen','Display-Filter zur Datenisolierung','TCP/IP-Handshake & Fluss verstehen','Anomalien in Paketen erkennen'], audience: 'Für Anfänger der Netzwerkanalyse.' },
+    fr: { topics: ['Réseau et modèle OSI','Interface et filtres Wireshark','TCP/IP et protocoles courants','Lire de vraies captures'], outcomes: ['Capturer et analyser le trafic','Isoler les données via filtres d\'affichage','Comprendre le handshake TCP/IP','Détecter des anomalies dans les paquets'], audience: 'Débutants en analyse réseau.' },
+    es: { topics: ['Redes y modelo OSI','Interfaz y filtros de Wireshark','TCP/IP y protocolos comunes','Lectura de capturas reales'], outcomes: ['Capturar y analizar tráfico','Aislar datos con filtros de visualización','Entender el handshake y flujos TCP/IP','Detectar anomalías en paquetes'], audience: 'Principiantes en análisis de red.' }
+  },
+  'pkt-200': {
+    en: { topics: ['Protocol dissection','Malicious traffic detection','Network forensics','Building detection rules'], outcomes: ['Dissect complex and encrypted protocols','Identify malicious and anomalous traffic','Reconstruct incidents from captures','Author rules to automate detection'], audience: 'Analysts with basic Wireshark skills.' },
+    zh: { topics: ['协议深度解析','恶意流量检测','网络取证','编写检测规则'], outcomes: ['解析复杂与加密协议','识别恶意与异常流量','从抓包还原事件','编写自动化检测规则'], audience: '具备 Wireshark 基础的分析人员。' },
+    ja: { topics: ['プロトコルの詳細解析','悪意あるトラフィック検出','ネットワークフォレンジクス','検出ルールの作成'], outcomes: ['複雑な暗号化プロトコルを解析する','悪性・異常トラフィックを特定する','キャプチャからインシデントを再現する','自動化のための検出ルールを書く'], audience: 'Wireshark 基礎を持つ分析者向け。' },
+    ko: { topics: ['프로토콜 심층 해부','악성 트래픽 탐지','네트워크 포렌식','탐지 규칙 작성'], outcomes: ['복잡하고 암호화된 프로토콜 해부','악성·이상 트래픽 식별','캡처로 사고 재구성','탐지 자동화를 위한 규칙 작성'], audience: 'Wireshark 기초가 있는 분석자.' },
+    ru: { topics: ['Детальный разбор протоколов','Обнаружение вредоносного трафика','Сетевая форензика','Написание правил детекции'], outcomes: ['Разбирать сложные и шифрованные протоколы','Выявлять вредоносный трафик','Восстанавливать инциденты по дампам','Писать правила для автоматизации'], audience: 'Для аналитиков с базовыми навыками Wireshark.' },
+    de: { topics: ['Protokoll-Zerlegung','Erkennung bösartigen Traffics','Netzwerk-Forensik','Detektionsregeln erstellen'], outcomes: ['Komplexe/verschlüsselte Protokolle zerlegen','Bösartigen Traffic identifizieren','Vorfälle aus Mitschnitten rekonstruieren','Regeln zur Automatisierung schreiben'], audience: 'Für Analysten mit Wireshark-Grundlagen.' },
+    fr: { topics: ['Dissection de protocoles','Détection de trafic malveillant','Forensique réseau','Règles de détection'], outcomes: ['Dissequer des protocoles complexes/chiffrés','Identifier le trafic malveillant','Reconstituer des incidents','Rédiger des règles de détection'], audience: 'Analystes à l\'aise avec Wireshark.' },
+    es: { topics: ['Disección de protocolos','Detección de tráfico malicioso','Forense de red','Creación de reglas de detección'], outcomes: ['Disecar protocolos complejos y cifrados','Identificar tráfico malicioso','Reconstruir incidentes desde capturas','Escribir reglas de detección'], audience: 'Analistas con bases de Wireshark.' }
+  },
+  'web-100': {
+    en: { topics: ['OWASP Top 10 deep dive','XSS, CSRF & SSRF','Auth & session attacks','Modern exploitation & defense'], outcomes: ['Chain real-world web vulnerabilities','Exploit and fix XSS/CSRF/SSRF','Attack broken auth and session handling','Harden applications against abuse'], audience: 'Pen testers and developers with web fundamentals.' },
+    zh: { topics: ['OWASP Top 10 精讲','XSS、CSRF 与 SSRF','认证与会话攻击','现代利用与防御'], outcomes: ['组合利用真实 Web 漏洞','利用并修复 XSS/CSRF/SSRF','攻击失效的认证与会话机制','加固应用抵御滥用'], audience: '具备 Web 基础的渗透测试人员与开发者。' },
+    ja: { topics: ['OWASP Top 10 の詳解','XSS・CSRF・SSRF','認証とセッションの攻撃','現代的な攻撃と防御'], outcomes: ['実世界の Web 脆弱性を連鎖させる','XSS/CSRF/SSRF を悪用し修正する','破綻した認証とセッションを攻める','アプリを強化し悪用を防ぐ'], audience: 'Web 基礎を持つペネトレーションテスター・開発者向け。' },
+    ko: { topics: ['OWASP Top 10 심화','XSS, CSRF, SSRF','인증 및 세션 공격','현대적 익스플로잇과 방어'], outcomes: ['실전 웹 취약점 체인링','XSS/CSRF/SSRF 악용 및 수정','취약한 인증·세션 공격','앱을 강화해 남용 방지'], audience: '웹 기초를 갖춘 펜테스터·개발자.' },
+    ru: { topics: ['OWASP Top 10 подробно','XSS, CSRF, SSRF','Атаки на аутентификацию и сессии','Современная эксплуатация и защита'], outcomes: ['Цепочка реальных веб-уязвимостей','Эксплуатация и исправление XSS/CSRF/SSRF','Атаки на сломанную аутентификацию','Защита приложений от злоупотреблений'], audience: 'Для пентестеров и разработчиков с веб-базой.' },
+    de: { topics: ['OWASP Top 10 vertieft','XSS, CSRF & SSRF','Auth- & Session-Angriffe','Moderne Ausnutzung & Abwehr'], outcomes: ['Reale Web-Schwachstellen kombinieren','XSS/CSRF/SSRF ausnutzen & beheben','Defekte Auth/Session angreifen','Apps vor Missbrauch härten'], audience: 'Für Pentester & Entwickler mit Web-Grundlagen.' },
+    fr: { topics: ['OWASP Top 10 en profondeur','XSS, CSRF et SSRF','Attaques d\'authentification et de session','Exploitation et défense modernes'], outcomes: ['Enchaîner des vulnérabilités web réelles','Exploiter et corriger XSS/CSRF/SSRF','Attaquer l\'auth et les sessions','Durcir les applications'], audience: 'Pentesters et développeurs avec des bases web.' },
+    es: { topics: ['OWASP Top 10 a fondo','XSS, CSRF y SSRF','Ataques de autenticación y sesión','Explotación y defensa modernas'], outcomes: ['Encadenar vulnerabilidades web reales','Explotar y corregir XSS/CSRF/SSRF','Atacar autenticación y sesiones débiles','Endurecer aplicaciones contra abusos'], audience: 'Pentesters y desarrolladores con bases web.' }
+  }
+};
+
 // === API Base URL ===
 // Cloudflare Workers backend. Override with window.LC901_API_BASE for local testing.
 const API_BASE = window.LC901_API_BASE || 'https://bitter-queen-5d76.3299224308.workers.dev/api';
@@ -532,6 +604,7 @@ function setLang(lang) {
   localStorage.setItem('lc901-lang', lang);
   applyTranslations();
   renderCourses();
+  refreshDetailModal();
   updateLangBtn();
   closeLangMenu();
 }
@@ -561,6 +634,11 @@ function applyTranslations() {
   // Update register buttons in course cards
   document.querySelectorAll('.course-register').forEach(function(btn) {
     btn.textContent = t('reg_btn');
+  });
+
+  // Update details buttons in course cards
+  document.querySelectorAll('.course-details').forEach(function(btn) {
+    btn.textContent = t('detail_btn');
   });
 
   const nameInput = document.getElementById('reg-name');
@@ -671,6 +749,8 @@ function createCourseCard(course, showRegister) {
   const title = t(course.id + '_title');
   const desc = t(course.id + '_desc');
   const hoursLabel = t('hours');
+  const detailLabel = t('detail_btn');
+  const regLabel = t('reg_btn');
 
   const card = document.createElement('div');
   card.className = 'course-card';
@@ -686,7 +766,10 @@ function createCourseCard(course, showRegister) {
       '<span class="course-hours">' + course.hours + ' ' + hoursLabel + '</span>' +
       '<span class="course-price">' + course.price + '</span>' +
     '</div>' +
-    (showRegister ? '<button class="course-register" onclick="openRegModal(\'' + course.id + '\')">Register</button>' : '');
+    '<div class="course-actions">' +
+      '<button class="course-details" onclick="openDetailModal(\'' + course.id + '\')">' + detailLabel + '</button>' +
+      (showRegister ? '<button class="course-register" onclick="openRegModal(\'' + course.id + '\')">' + regLabel + '</button>' : '') +
+    '</div>';
   return card;
 }
 
@@ -761,6 +844,90 @@ if (modalClose) {
 if (regModal) {
   regModal.addEventListener('click', function(e) {
     if (e.target === regModal) closeRegModal();
+  });
+}
+
+// === Course Detail Modal ===
+const detailModal = document.getElementById('detail-modal');
+const detailClose = document.getElementById('detail-close');
+let currentDetailCourseId = null;
+
+function getCourseDetailContent(courseId) {
+  const d = courseDetails[courseId] || {};
+  return d[currentLang] || d['en'] || { topics: [], outcomes: [], audience: '' };
+}
+
+function populateDetail(courseId) {
+  const course = courses.find(function(c) { return c.id === courseId; });
+  if (!course) return;
+  const content = getCourseDetailContent(courseId);
+
+  document.getElementById('detail-id').textContent = course.id.toUpperCase();
+
+  const lvlEl = document.getElementById('detail-level');
+  lvlEl.textContent = t('level_' + course.level);
+  lvlEl.className = 'course-tag' + (course.level === 'intermediate' ? ' intermediate' : course.level === 'advanced' ? ' advanced' : '');
+
+  document.getElementById('detail-title').textContent = t(courseId + '_title');
+  document.getElementById('detail-desc').textContent = t(courseId + '_desc');
+  document.getElementById('detail-hours').textContent = course.hours + ' ' + t('hours');
+  document.getElementById('detail-price').textContent = course.price;
+
+  document.getElementById('detail-topics-label').textContent = t('detail_topics_title');
+  document.getElementById('detail-outcomes-label').textContent = t('detail_outcomes_title');
+  document.getElementById('detail-audience-label').textContent = t('detail_audience_title');
+
+  const topicsUl = document.getElementById('detail-topics');
+  topicsUl.innerHTML = '';
+  (content.topics || []).forEach(function(item) {
+    const li = document.createElement('li');
+    li.textContent = item;
+    topicsUl.appendChild(li);
+  });
+
+  const outcomesUl = document.getElementById('detail-outcomes');
+  outcomesUl.innerHTML = '';
+  (content.outcomes || []).forEach(function(item) {
+    const li = document.createElement('li');
+    li.textContent = item;
+    outcomesUl.appendChild(li);
+  });
+
+  document.getElementById('detail-audience').textContent = content.audience || '';
+
+  const enrollBtn = document.getElementById('detail-enroll');
+  enrollBtn.textContent = t('reg_btn');
+  enrollBtn.onclick = function() {
+    closeDetailModal();
+    openRegModal(courseId);
+  };
+}
+
+function openDetailModal(courseId) {
+  if (!detailModal) return;
+  currentDetailCourseId = courseId;
+  populateDetail(courseId);
+  detailModal.classList.add('active');
+}
+
+function closeDetailModal() {
+  if (!detailModal) return;
+  detailModal.classList.remove('active');
+  currentDetailCourseId = null;
+}
+
+function refreshDetailModal() {
+  if (detailModal && detailModal.classList.contains('active') && currentDetailCourseId) {
+    populateDetail(currentDetailCourseId);
+  }
+}
+
+if (detailClose) {
+  detailClose.addEventListener('click', closeDetailModal);
+}
+if (detailModal) {
+  detailModal.addEventListener('click', function(e) {
+    if (e.target === detailModal) closeDetailModal();
   });
 }
 
